@@ -32,30 +32,39 @@
 - ansible.builtin.include_tasks: manage_groups.yml
   loop: "{{ users | dict2items }}"
   loop_control:
-    label: "{{ item.key }}"
+    loop_var: user_item
+    label: "{{ user_item.key | regex_replace('-', '_') }}"
+    
 - ansible.builtin.include_tasks: manage_users.yml
   loop: "{{ users | dict2items }}"
   loop_control:
-    label: "{{ item.key }}"
+    loop_var: user_item
+    label: "{{ user_item.key | regex_replace('-', '_') }}"
 
 # configure user's profile
 - ansible.builtin.include_tasks: configure_bash.yml
   loop: "{{ users | dict2items }}"
   loop_control:
-    label: "{{ item.key }}"
+    loop_var: user_item
+    label: "{{ user_item.key | regex_replace('-', '_') }}"
+    
   when: item.value.state|default("present") != "absent"
 - ansible.builtin.include_tasks: configure_ssh.yml
   loop: "{{ users | dict2items }}"
   loop_control:
-    label: "{{ item.key }}"
+    loop_var: user_item
+    label: "{{ user_item.key | regex_replace('-', '_') }}"
   when: item.value.state|default("present") != "absent"
 - ansible.builtin.include_tasks: configure_vim.yml
   loop: "{{ users | dict2items }}"
   loop_control:
-    label: "{{ item.key }}"
+    loop_var: user_item
+    label: "{{ user_item.key | regex_replace('-', '_') }}"
   when: item.value.state|default("present") != "absent"
+  
 - ansible.builtin.include_tasks: configure_profile.yml
   loop: "{{ users | dict2items }}"
   loop_control:
-    label: "{{ item.key }}"
+    loop_var: user_item
+    label: "{{ user_item.key | regex_replace('-', '_') }}"
   when: item.value.state|default("present") != "absent"
